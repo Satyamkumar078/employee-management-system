@@ -2,9 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const { serve } = require('inngest/express');
-const { inngest } = require('./inngest/client');
-const { markDailyAttendance } = require('./inngest/functions');
+// const { serve } = require('inngest/express');
+// const { inngest } = require('./inngest/client');
+// const { markDailyAttendance } = require('./inngest/functions');
 
 const authRoutes = require('./routes/auth');
 const employeeRoutes = require('./routes/employees');
@@ -33,10 +33,10 @@ app.use('/api/payslips', payslipRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
 // Inngest route
-app.use('/api/inngest', serve({
-  client: inngest,
-  functions: [markDailyAttendance],
-}));
+// app.use('/api/inngest', serve({
+//   client: inngest,
+//   functions: [markDailyAttendance],
+// }));
 
 // Basic route
 app.get('/', (req, res) => {
