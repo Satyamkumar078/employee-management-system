@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { format } from 'date-fns';
@@ -13,7 +13,7 @@ export default function Leave() {
 
   const fetchLeaves = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/leaves');
+      const res = await api.get('/api/leaves');
       setLeaves(res.data);
     } catch (err) {
       toast.error('Failed to fetch leaves');
@@ -27,7 +27,7 @@ export default function Leave() {
   const handleApply = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/leaves', formData);
+      await api.post('/api/leaves', formData);
       toast.success('Leave applied successfully');
       setShowModal(false);
       setFormData({ startDate: '', endDate: '', reason: '' });
@@ -39,7 +39,7 @@ export default function Leave() {
 
   const handleStatusChange = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5000/api/leaves/${id}/status`, { status });
+      await api.put(`/api/leaves/${id}/status`, { status });
       toast.success(`Leave ${status.toLowerCase()}`);
       fetchLeaves();
     } catch (err) {

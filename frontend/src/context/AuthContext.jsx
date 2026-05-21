@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
-
+import api from '../api/axios';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -16,8 +15,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/me`);
+      const res = await api.get('/api/auth/me');
       setUser(res.data.user);
       setEmployeeData(res.data.employeeData);
     } catch (error) {
@@ -33,11 +31,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/auth/login`,
-      { email, password }
-    );
-
+    const res = await api.post('/api/auth/login', { email, password });
     localStorage.setItem('token', res.data.token);
     await fetchUser();
   };
@@ -46,7 +40,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     setUser(null);
     setEmployeeData(null);
-    delete axios.defaults.headers.common['Authorization'];
   };
 
   return (

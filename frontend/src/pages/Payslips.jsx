@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { Download, Plus } from 'lucide-react';
@@ -20,7 +20,7 @@ export default function Payslips() {
 
   const fetchPayslips = async () => {
     try {
-      const res = await axios.get('${import.meta.env.VITE_API_URL}/api/payslips');
+      const res = await api.get('/api/payslips');
       setPayslips(res.data);
     } catch (err) {
       toast.error('Failed to fetch payslips');
@@ -30,7 +30,7 @@ export default function Payslips() {
   const fetchEmployees = async () => {
     if (user?.role === 'Admin') {
       try {
-        const res = await axios.get('${import.meta.env.VITE_API_URL}/api/employees');
+        const res = await api.get('/api/employees');
         setEmployees(res.data);
       } catch (err) {}
     }
@@ -44,7 +44,7 @@ export default function Payslips() {
   const handleGenerate = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('${import.meta.env.VITE_API_URL}/api/payslips', formData);
+      await api.post('/api/payslips', formData);
       toast.success('Payslip generated successfully');
       setShowModal(false);
       fetchPayslips();

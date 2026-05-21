@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 
@@ -13,7 +13,7 @@ export default function Employees() {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/employees');
+      const res = await api.get('/api/employees');
       setEmployees(res.data);
     } catch (err) {
       toast.error('Failed to fetch employees');
@@ -27,7 +27,7 @@ export default function Employees() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/employees', formData);
+      await api.post('/api/employees', formData);
       toast.success('Employee added successfully');
       setShowModal(false);
       fetchEmployees();
@@ -43,7 +43,7 @@ export default function Employees() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/employees/${id}`);
+        await api.delete(`/api/employees/${id}`);
         toast.success('Employee deleted');
         fetchEmployees();
       } catch (err) {

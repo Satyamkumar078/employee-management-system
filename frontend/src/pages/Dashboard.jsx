@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { Users, UserCheck, UserMinus, FileClock } from 'lucide-react';
 
@@ -21,7 +21,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (user?.role === 'Admin') {
-      axios.get('http://localhost:5000/api/dashboard/stats')
+      api.get('/api/dashboard/stats')
         .then(res => setStats(res.data))
         .catch(err => console.error(err));
     }

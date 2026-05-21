@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { format } from 'date-fns';
@@ -11,7 +11,7 @@ export default function Attendance() {
 
   const fetchAttendance = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/attendance');
+      const res = await api.get('/api/attendance');
       setRecords(res.data);
     } catch (err) {
       toast.error('Failed to fetch attendance');
@@ -26,7 +26,7 @@ export default function Attendance() {
     setLoading(true);
     try {
       const date = new Date().toISOString().split('T')[0];
-      await axios.post('http://localhost:5000/api/attendance/mark', { status: 'Present', date });
+      await api.post('/api/attendance/mark', { status: 'Present', date });
       toast.success('Attendance marked for today');
       fetchAttendance();
     } catch (err) {
