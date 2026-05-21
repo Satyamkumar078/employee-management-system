@@ -25,7 +25,10 @@ export default function Attendance() {
   const markAttendance = async () => {
     setLoading(true);
     try {
-      const date = new Date().toISOString().split('T')[0];
+      const localDate = new Date();
+      const offset = localDate.getTimezoneOffset();
+      const adjustedDate = new Date(localDate.getTime() - (offset * 60 * 1000));
+      const date = adjustedDate.toISOString().split('T')[0];
       await api.post('/api/attendance/mark', { status: 'Present', date });
       toast.success('Attendance marked for today');
       fetchAttendance();

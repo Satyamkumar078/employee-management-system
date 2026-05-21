@@ -55,14 +55,14 @@ router.put('/:id/status', authenticateToken, isAdmin, async (req, res) => {
     leave.status = status;
     await leave.save();
 
-    // Send email notification
+    // Send email notification asynchronously (fire-and-forget)
     const user = await User.findById(leave.employee_id.user_id);
     if (user) {
-      await sendEmail({
+      sendEmail({
         to: user.email,
         subject: `Leave Application ${status}`,
         text: `Dear ${leave.employee_id.firstName},\n\nYour leave application from ${leave.startDate} to ${leave.endDate} has been ${status}.\n\nRegards,\nHR Department`
-      });
+      }).catch(err => console.error('Email error:', err));
     }
 
     res.json(leave);

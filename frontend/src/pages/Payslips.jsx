@@ -60,8 +60,8 @@ export default function Payslips() {
   const downloadPDF = (id, employeeName, month, year) => {
     const element = payslipRefs.current[id];
     
-    // Temporarily show the element for PDF generation
-    element.classList.remove('hidden');
+    // The element is visually hidden but still rendered in the DOM
+    // so html2pdf can capture its dimensions accurately.
     
     const opt = {
       margin: 1,
@@ -71,10 +71,7 @@ export default function Payslips() {
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(element).save().then(() => {
-      // Hide it again
-      element.classList.add('hidden');
-    });
+    html2pdf().set(opt).from(element).save();
   };
 
   const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
@@ -132,10 +129,9 @@ export default function Payslips() {
               </div>
             </div>
 
-            {/* Hidden Payslip Template for PDF Generation */}
             <div 
               ref={el => payslipRefs.current[payslip._id] = el} 
-              className="hidden absolute top-0 left-0 bg-white p-10 w-[800px] border border-gray-200"
+              className="absolute opacity-0 pointer-events-none -z-50 top-0 left-0 bg-white p-10 w-[800px] border border-gray-200"
             >
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-blue-600 uppercase tracking-wider">EMS PRO</h1>

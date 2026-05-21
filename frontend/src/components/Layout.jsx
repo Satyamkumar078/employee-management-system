@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -8,7 +8,9 @@ import {
   CalendarOff, 
   FileText, 
   Settings, 
-  LogOut 
+  LogOut,
+  Menu,
+  X
 } from 'lucide-react';
 
 const SidebarItem = ({ to, icon: Icon, label }) => {
@@ -31,16 +33,28 @@ const SidebarItem = ({ to, icon: Icon, label }) => {
 
 export default function Layout() {
   const { user, logout } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div className="flex h-screen bg-gray-50">
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white hidden md:flex flex-col">
-        <div className="p-6">
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white flex flex-col transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-6 flex justify-between items-center">
           <h1 className="text-2xl font-bold tracking-wider text-blue-400">EMS<span className="text-white">Pro</span></h1>
+          <button className="md:hidden text-gray-300 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+            <X size={24} />
+          </button>
         </div>
         
-        <nav className="flex-1 px-4 space-y-2 mt-4">
+        <nav className="flex-1 px-4 space-y-2 mt-4" onClick={() => setIsMobileMenuOpen(false)}>
           <SidebarItem to="/" icon={LayoutDashboard} label="Dashboard" />
           {user?.role === 'Admin' && (
             <SidebarItem to="/employees" icon={Users} label="Employees" />
@@ -65,10 +79,18 @@ export default function Layout() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 py-4 px-8 flex justify-between items-center h-16">
-          <h2 className="text-xl font-semibold text-gray-800 capitalize">
-            {window.location.pathname === '/' ? 'Dashboard' : window.location.pathname.substring(1)}
-          </h2>
+        <header className="bg-white border-b border-gray-200 py-4 px-4 sm:px-8 flex justify-between items-center h-16">
+          <div className="flex items-center space-x-4">
+            <button 
+              className="md:hidden text-gray-600 hover:text-gray-900 focus:outline-none"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu size={24} />
+            </button>
+            <h2 className="text-xl font-semibold text-gray-800 capitalize hidden sm:block">
+              {window.location.pathname === '/' ? 'Dashboard' : window.location.pathname.substring(1)}
+            </h2>
+          </div>
           <div className="flex items-center space-x-4">
             <div className="text-right">
               <p className="text-sm font-medium text-gray-900">{user?.email}</p>
