@@ -21,6 +21,11 @@ export default function Login() {
     }
   };
 
+  const fillDemoAdmin = () => {
+    setEmail('admin@ems.com');
+    setPassword('admin123');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg">
@@ -68,6 +73,20 @@ export default function Login() {
             </button>
           </div>
         </form>
+
+        <div className="mt-6 border-t border-gray-200 pt-6">
+          <div className="bg-blue-50 rounded-lg p-4 text-sm text-blue-800">
+            <h4 className="font-bold text-blue-900 mb-2">Recruiter / Interview Demo</h4>
+            <p className="mb-2">System Architecture: Employee accounts are provisioned exclusively by Administrators. There is no public signup.</p>
+            <p className="mb-2"><strong>Admin Login:</strong> admin@ems.com / admin123</p>
+            <button 
+              onClick={fillDemoAdmin}
+              className="text-blue-600 font-medium hover:text-blue-800 underline"
+            >
+              Click here to fill Admin credentials
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

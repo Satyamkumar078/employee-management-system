@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const bcrypt = require('bcryptjs');
+const User = require('./models/User');
 // const { serve } = require('inngest/express');
 // const { inngest } = require('./inngest/client');
 // const { markDailyAttendance } = require('./inngest/functions');
@@ -21,7 +23,28 @@ app.use(express.json());
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected successfully'))
+  .then(async () => {
+    console.log('MongoDB connected successfully');
+    
+    // Auto-seed admin user if database is empty
+    try {
+      const userCount = await User.countDocuments();
+      if (userCount === 0) {
+        console.log('No users found. Creating default admin account...');
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash('admin123', salt);
+        const admin = new User({
+          email: 'admin@ems.com',
+          password: hashedPassword,
+          role: 'Admin',
+        });
+        await admin.save();
+        console.log('Default admin created: admin@ems.com / admin123');
+      }
+    } catch (seedErr) {
+      console.error('Error auto-seeding database:', seedErr);
+    }
+  })
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Routes
