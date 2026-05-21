@@ -24,7 +24,8 @@ router.post('/login', async (req, res) => {
 
     res.json({ token, role: user.role });
   } catch (err) {
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Login Error:', err);
+    res.status(500).json({ message: `Server Error: ${err.message}` });
   }
 });
 
@@ -40,7 +41,8 @@ router.get('/me', authenticateToken, async (req, res) => {
 
     res.json({ user, employeeData });
   } catch (err) {
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Me Error:', err);
+    res.status(500).json({ message: `Server Error: ${err.message}` });
   }
 });
 
