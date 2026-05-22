@@ -57,21 +57,40 @@ export default function Payslips() {
     }
   };
 
-  const downloadPDF = (id, employeeName, month, year) => {
-    const element = payslipRefs.current[id];
+  const downloadPDF = async (id, employeeName, month, year) => {
+    const originalElement = payslipRefs.current[id];
     
-    // The element is visually hidden but still rendered in the DOM
-    // so html2pdf can capture its dimensions accurately.
+    // 1. Deep clone the DOM element
+    const clonedElement = originalElement.cloneNode(true);
+    
+    // 2. Remove 'hidden' and force off-screen rendering
+    clonedElement.classList.remove('hidden');
+    clonedElement.style.display = 'block';
+    clonedElement.style.position = 'absolute';
+    clonedElement.style.left = '-9999px';
+    clonedElement.style.top = '-9999px';
+    
+    // 3. Inject clone into body
+    document.body.appendChild(clonedElement);
+
+    // 4. Async paint synchronization (wait for browser layout engine)
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     const opt = {
       margin: 1,
       filename: `Payslip_${employeeName}_${month}_${year}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(element).save();
+    try {
+      // 5. html2pdf capture sequence
+      await html2pdf().set(opt).from(clonedElement).save();
+    } finally {
+      // 6. Clean memory cleanup
+      document.body.removeChild(clonedElement);
+    }
   };
 
   const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
@@ -131,7 +150,7 @@ export default function Payslips() {
 
             <div 
               ref={el => payslipRefs.current[payslip._id] = el} 
-              className="absolute opacity-0 pointer-events-none -z-50 top-0 left-0 bg-white p-10 w-[800px] border border-gray-200"
+              className="hidden bg-white p-10 w-[800px] border border-gray-200"
             >
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-blue-600 uppercase tracking-wider">EMS PRO</h1>
